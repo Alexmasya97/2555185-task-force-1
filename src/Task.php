@@ -15,6 +15,10 @@ class Task
         $this->executorId = $executorId;
     }
 
+    /**
+     * Возвращает список доступных действий для задачи в зависимости от её текущего статуса
+     * @return array<TaskAction> Массив доступных действий (констант enum TaskAction)
+     */
     public function getAvailableActions(): array
     {
         return match ($this->currentStatus) {
@@ -24,6 +28,12 @@ class Task
         };
     }
 
+    /**
+     * Возвращает следующий статус задачи после выполнения указанного действия
+     *
+     * @param TaskAction $action Действие, которое выполняется над задачей
+     * @return TaskStatus|null Следующий статус или null, если действие не поддерживается
+     */
     public function getNextStatus(TaskAction $action): ?TaskStatus
     {
         return match ($action) {
@@ -34,6 +44,11 @@ class Task
             default => null,
         };
     }
+    /**
+     * Возвращает текущий статус задачи
+     *
+     * @return TaskStatus Текущий статус задачи
+     */
     public function getCurrentStatus(): TaskStatus
     {
         return $this->currentStatus;
