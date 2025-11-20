@@ -10,6 +10,11 @@ enum TaskAction: string
     case COMPLETE = 'complete';
     case REFUSE = 'refuse';
 
+    /**
+     * Возвращает русскоязычное название действия
+     *
+     * @return string название действия на русском языке
+     */
     public function actionMatchingRu(): string
     {
         return match ($this) {

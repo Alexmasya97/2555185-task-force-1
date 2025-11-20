@@ -11,6 +11,11 @@ enum TaskStatus: string
     case COMPLETED = 'completed';
     case FAILED = 'failed';
 
+    /**
+     * Возвращает русскоязычное название статуса
+     *
+     * @return string название статуса на русском языке
+     */
     public function statusMatchingRu(): string
     {
         return match ($this) {
