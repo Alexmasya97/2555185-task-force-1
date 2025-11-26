@@ -4,8 +4,8 @@ declare(strict_types=1);
 require_once 'vendor/autoload.php';
 
 // 2. Используем namespace (если нужно)
+use HtmlAcademy\Enums\TaskAction;
 use HtmlAcademy\Task;
-use HtmlAcademy\TaskAction;
 
 $task = new Task(123, 456);
 
