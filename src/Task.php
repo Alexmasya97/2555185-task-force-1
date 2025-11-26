@@ -2,6 +2,14 @@
 declare(strict_types=1);
 
 namespace HtmlAcademy;
+
+use HtmlAcademy\Actions\AbstractAction;
+use HtmlAcademy\Actions\RespondAction;
+use HtmlAcademy\Actions\CancelAction;
+use HtmlAcademy\Actions\CompleteAction;
+use HtmlAcademy\Actions\RefuseAction;
+use HtmlAcademy\Enums\TaskStatus;
+
 class Task
 {
     private TaskStatus $currentStatus;
@@ -16,42 +24,57 @@ class Task
     }
 
     /**
-     * Возвращает список доступных действий для задачи в зависимости от её текущего статуса
-     * @return array<TaskAction> Массив доступных действий (констант enum TaskAction)
+     * Возвращает список доступных действий
+     *
+     * @param int $currentUserId ID текущего пользователя
+     * @return array<AbstractAction> Массив доступных действий
      */
-    public function getAvailableActions(): array
+    public function getAvailableActions(int $currentUserId): array
     {
-        return match ($this->currentStatus) {
-            TaskStatus::NEW => [TaskAction::RESPOND, TaskAction::CANCEL],
-            TaskStatus::IN_PROGRESS => [TaskAction::COMPLETE, TaskAction::REFUSE],
+        $actionsByStatus = match ($this->currentStatus) {
+            TaskStatus::NEW => [new RespondAction(), new CancelAction()],
+            TaskStatus::IN_PROGRESS => [new CompleteAction(), new RefuseAction()],
             TaskStatus::COMPLETED, TaskStatus::CANCELED, TaskStatus::FAILED => [],
         };
+
+        // Фильтруем действия по правам пользователя
+        return array_filter(
+            $actionsByStatus,
+            fn($action) => $action->checkRights(
+                $this->executorId,
+                $this->customerId,
+                $currentUserId
+            )
+        );
     }
 
-    /**
-     * Возвращает следующий статус задачи после выполнения указанного действия
-     *
-     * @param TaskAction $action Действие, которое выполняется над задачей
-     * @return TaskStatus|null Следующий статус или null, если действие не поддерживается
-     */
-    public function getNextStatus(TaskAction $action): ?TaskStatus
+    public function getNextStatus(AbstractAction $action): ?TaskStatus
     {
-        return match ($action) {
-            TaskAction::CANCEL => TaskStatus::CANCELED,
-            TaskAction::RESPOND => TaskStatus::IN_PROGRESS,
-            TaskAction::COMPLETE => TaskStatus::COMPLETED,
-            TaskAction::REFUSE => TaskStatus::FAILED,
-            default => null,
-        };
+        return $action->getNextStatus();
     }
-    /**
-     * Возвращает текущий статус задачи
-     *
-     * @return TaskStatus Текущий статус задачи
-     */
+
     public function getCurrentStatus(): TaskStatus
     {
         return $this->currentStatus;
     }
-}
 
+    public function setStatus(TaskStatus $status): void
+    {
+        $this->currentStatus = $status;
+    }
+
+    public function setExecutorId(int $executorId): void
+    {
+        $this->executorId = $executorId;
+    }
+
+    public function getExecutorId(): ?int
+    {
+        return $this->executorId;
+    }
+
+    public function getCustomerId(): int
+    {
+        return $this->customerId;
+    }
+}

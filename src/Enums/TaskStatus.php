@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace HtmlAcademy;
+namespace HtmlAcademy\Enums;
 
 enum TaskStatus: string
 {
