@@ -34,6 +34,13 @@ failed_tasks INT DEFAULT 0,
 FOREIGN KEY (specialization_id) REFERENCES specialization(id)
 );
 
+CREATE TABLE cities (
+id INT AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(128) NOT NULL UNIQUE,
+latitude DECIMAL(10, 8),
+longitude DECIMAL(11, 8)
+);
+
 CREATE TABLE task (
 task_id INT PRIMARY KEY AUTO_INCREMENT,
 title VARCHAR(128) NOT NULL,
@@ -44,11 +51,12 @@ due_date DATE,
 status VARCHAR(128),
 employer_id INT NOT NULL,
 performer_id INT,
-latitude DECIMAL(10, 8),
-longitude DECIMAL(11, 8),
+city_id INT,
+category_id INT,
 FOREIGN KEY (employer_id) REFERENCES user(user_id),
 FOREIGN KEY (performer_id) REFERENCES user(user_id),
-FOREIGN KEY (category_id) REFERENCES category(id)
+FOREIGN KEY (category_id) REFERENCES category(id),
+FOREIGN KEY (city_id) REFERENCES cities(id)
 );
 
 CREATE TABLE file (
@@ -78,6 +86,8 @@ score INT NOT NULL,
 task_id INT NOT NULL UNIQUE ,
 employer_id INT NOT NULL,
 performer_id INT NOT NULL,
+review_name varchar(125),
+review_icon varchar(125),
 FOREIGN KEY (task_id) REFERENCES task(task_id),
 FOREIGN KEY (employer_id) REFERENCES user(user_id),
 FOREIGN KEY (performer_id) REFERENCES user(user_id)
