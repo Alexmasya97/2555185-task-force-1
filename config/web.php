@@ -48,6 +48,8 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'tasks' => 'tasks/index', // /tasks → TasksController::actionIndex()
+                'tasks/<id:\d+>' => 'tasks/view', // если нужно просмотр одной задачи
             ],
         ],
 
