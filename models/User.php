@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "user".
@@ -31,8 +32,7 @@ use Yii;
  */
 class User extends \yii\db\ActiveRecord
 {
-
-
+    public $password_repeat;
     /**
      * {@inheritdoc}
      */
@@ -53,8 +53,10 @@ class User extends \yii\db\ActiveRecord
             [['birthday'], 'safe'],
             [['specialization_id', 'show_contacts', 'failed_tasks'], 'integer'],
             [['name', 'email', 'role', 'telegram', 'location'], 'string', 'max' => 128],
-            [['password', 'avatar', 'about'], 'string', 'max' => 255],
-            [['phone'], 'string', 'max' => 11],
+            [['avatar', 'about'], 'string', 'max' => 255],
+            ['password', 'string', 'min' => 8],
+            ['phone', 'match', 'pattern' => '/^[\d]{11}/i',
+                'message' => 'Номер телефона должен состоять из 11 цифр'],
             [['email'], 'unique'],
             [['specialization_id'], 'exist', 'skipOnError' => true, 'targetClass' => Specialization::className(), 'targetAttribute' => ['specialization_id' => 'id']],
         ];
@@ -67,19 +69,19 @@ class User extends \yii\db\ActiveRecord
     {
         return [
             'user_id' => 'User ID',
-            'name' => 'Name',
-            'email' => 'Email',
-            'password' => 'Password',
-            'role' => 'Role',
-            'birthday' => 'Birthday',
-            'avatar' => 'Avatar',
-            'phone' => 'Phone',
-            'telegram' => 'Telegram',
-            'location' => 'Location',
-            'about' => 'About',
+            'name' => 'Имя',
+            'email' => 'Электронная почта',
+            'password' => 'Пароль',
+            'role' => 'Роль',
+            'birthday' => 'День рождения',
+            'avatar' => 'Аватар',
+            'phone' => 'Номер телефона',
+            'telegram' => 'Телеграм',
+            'location' => 'Местоположение',
+            'about' => 'Описание',
             'specialization_id' => 'Specialization ID',
             'show_contacts' => 'Show Contacts',
-            'failed_tasks' => 'Failed Tasks',
+            'failed_tasks' => 'Проваленные задания',
         ];
     }
 
